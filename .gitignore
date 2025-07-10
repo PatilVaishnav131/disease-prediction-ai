@@ -1,0 +1,83 @@
+# Node.js (React frontend)
+node_modules/
+build/
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Python (Django backend)
+__pycache__/
+*.py[cod]
+*.sqlite3
+venv/
+env/
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+
+# Django specific
+db.sqlite3
+media/
+staticfiles/
+local_settings.py
+
+# Virtual environment
+*.env
+*.venv
+*.egg-info/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Tailwind cache
+.pnp.*
+.pnpm-debug.log
+tailwind.config.js
+
+# Test coverage
+coverage/
+*.cover
+*.py,cover
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Misc
+*.bak
+*.tmp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+*.sqlite3
+
+# Node
+node_modules/
+build/
+dist/
+
+# Environment
+.env
+
+# VS Code
+.vscode/
+
+# Mac/Linux/Windows
+.DS_Store
+Thumbs.db
