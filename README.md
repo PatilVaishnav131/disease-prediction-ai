@@ -1,40 +1,61 @@
+# 🩺 MediPredict — AI-Powered Disease Prediction & Health Guidance Platform
 
-# 🧠 Disease Prediction using AI/ML
-
-A web-based application designed to help doctors and medical professionals predict diseases based on patient symptoms using AI/ML models. This collaborative project combines a full-stack web application (Express.js & MongoDB) with machine learning integration via a Python-based API.
-
----
-
-## 📌 Features
-
-- 🔐 **Doctor Authentication** (Login/Signup)
-- 📝 **Patient Symptom Submission** Form
-- 🤖 **Disease Prediction** using ML Model (Python Flask/FastAPI)
-- 📊 **Case History Storage** (MongoDB)
-- 💬 **Discussion/Chat Section** for Doctors
-- 🎨 Responsive UI using EJS + Custom CSS
+MediPredict is a modern full-stack medical web application that helps the general public and doctors to assess potential disease risks through AI/ML models and learn about health with expert-backed guidance.
 
 ---
 
-## 🛠️ Tech Stack
+## 🌐 Tech Stack
 
-### Frontend:
-- HTML, CSS, JavaScript
-- EJS Templating
+### 🖥️ Frontend
+- React.js (with React Router)
+- TailwindCSS (fully responsive UI)
+- Axios for API integration
 
-### Backend:
-- Node.js with Express
-- MongoDB with Mongoose
-
-### ML Integration:
-- Python Flask/FastAPI microservice
-- Trained disease prediction model (e.g. Decision Tree, Random Forest, etc.)
+### 🧠 Backend
+- Django + Django REST Framework
+- SQLite / PostgreSQL (configurable)
+- Python ML Model (scikit-learn, pandas, etc.)
 
 ---
 
-## 🚀 How to Run
+## 🤖 Machine Learning Integration
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/<your-org>/disease-prediction.git
-   cd disease-prediction
+Trained ML models (like Logistic Regression, Random Forest, etc.) are integrated to analyze user health reports and symptoms to predict diseases such as:
+- Heart Disease
+- Diabetes
+- Lung cancer
+
+Model is either:
+- Loaded directly inside Django
+- OR served separately via Flask/FastAPI (microservice)
+
+---
+
+## 📦 Features
+
+- 🧬 **Disease Prediction** based on uploaded reports or questionnaire
+- 📊 **Interactive Frontend** with real-time prediction results
+- 📚 **Health Education Section** (Tips, FAQs, Guides)
+- 📂 **User History Tracking** (WIP)
+- 🔐 **Secure Authentication** (coming soon)
+- ⚙️ **Admin Panel** (Django built-in)
+
+---
+
+## 📁 Project Structure
+
+```bash
+disease_predictions/
+├── frontend/                # ReactJS codebase
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   └── App.js
+│   └── public/
+├── backend/                 # Django backend
+│   ├── medi_backend/
+│   ├── disease_model/
+│   └── manage.py
+├── ML_models/               # Trained ML models (.pkl or .joblib)
+└── README.md
