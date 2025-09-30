@@ -7,7 +7,6 @@ import medicalHero from "../assets/images/medical-hero.jpg";
 const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex flex-col">
-      <Navbar />
 
       {/* Hero Section */}
       <section className="flex flex-col md:flex-row items-center justify-between px-10 py-20">
