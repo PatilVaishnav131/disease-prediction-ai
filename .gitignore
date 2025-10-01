@@ -42,7 +42,7 @@ Thumbs.db
 # Tailwind cache
 .pnp.*
 .pnpm-debug.log
-tailwind.config.js
+
 
 # Test coverage
 coverage/
