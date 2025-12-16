@@ -13,7 +13,7 @@ const MedicalPredictionPage = () => {
       title: 'Malaria Detection',
       description: 'Analyze blood smear images for malaria parasites',
       icon: '🦟',
-      apiEndpoint: '/api/malaria/predict',
+      apiEndpoint: 'http://127.0.0.1:8000/predict/malaria',
       color: 'from-red-500 to-pink-500'
     },
     {
@@ -21,7 +21,7 @@ const MedicalPredictionPage = () => {
       title: 'Skin Disease Detection',
       description: 'Identify various skin conditions and diseases',
       icon: '🔬',
-      apiEndpoint: '/api/skin/predict',
+      apiEndpoint: 'http://127.0.0.1:8000/predict/skin',
       color: 'from-orange-500 to-amber-500'
     },
     {
@@ -29,7 +29,7 @@ const MedicalPredictionPage = () => {
       title: 'Brain Tumor Detection',
       description: 'Detect and classify brain tumors from MRI scans',
       icon: '🧠',
-      apiEndpoint: '/api/brain/predict',
+      apiEndpoint: 'http://127.0.0.1:8000/predict/brain',
       color: 'from-purple-500 to-indigo-500'
     }
   ];
@@ -59,29 +59,30 @@ const MedicalPredictionPage = () => {
 
     setIsLoading(true);
     const formData = new FormData();
-    formData.append('image', uploadedImage);
+
+    // IMPORTANT: backend expects "file"
+    formData.append('file', uploadedImage);
 
     try {
-      // Simulated API call - replace with actual endpoint
       const response = await fetch(selectedOption.apiEndpoint, {
         method: 'POST',
         body: formData
       });
-      
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data = await response.json();
       setResult(data);
     } catch (error) {
       console.error('Prediction error:', error);
-      // Simulated result for demonstration
-      setResult({
-        prediction: 'Sample Prediction Result',
-        confidence: '95.8%',
-        details: 'Analysis completed successfully'
-      });
+      alert("Prediction failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+
 
   const resetAll = () => {
     setSelectedOption(null);
@@ -268,15 +269,17 @@ const MedicalPredictionPage = () => {
                         <div className="bg-white rounded-lg p-4 shadow">
                           <p className="text-sm text-gray-600 mb-1">Confidence</p>
                           <p className="text-xl font-bold text-green-600">
-                            {result.confidence}
+                            {(result.confidence * 100).toFixed(2)}%
                           </p>
+
                         </div>
                         
                         <div className="bg-white rounded-lg p-4 shadow">
                           <p className="text-sm text-gray-600 mb-1">Details</p>
                           <p className="text-gray-700">
-                            {result.details}
+                            {result.details || "AI-based medical image analysis completed."}
                           </p>
+
                         </div>
                       </div>
                       
