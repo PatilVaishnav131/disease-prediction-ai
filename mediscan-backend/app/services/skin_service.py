@@ -22,8 +22,6 @@ SKIN_CLASSES = [
     'Vitiligo', 'Warts'
 ]
 
-CONFIDENCE_THRESHOLD = 0.6
-
 # -----------------------------
 # Model
 # -----------------------------
@@ -38,7 +36,7 @@ model.load_state_dict(state_dict, strict=True)
 model.eval()
 
 # -----------------------------
-# Preprocessing (ConvNeXt)
+# Preprocessing
 # -----------------------------
 transform = transforms.Compose([
     transforms.ToTensor(),
@@ -49,7 +47,7 @@ transform = transforms.Compose([
 ])
 
 # -----------------------------
-# Filtering Functions
+# Filters
 # -----------------------------
 def is_blurry(image_np, threshold=100):
     gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
@@ -89,12 +87,12 @@ def resize_with_padding(image_np, size=224):
 
 
 # -----------------------------
-# TTA Prediction
+# TTA
 # -----------------------------
 def predict_with_tta(image, model):
     images = [
         image,
-        torch.flip(image, dims=[3])  # horizontal flip
+        torch.flip(image, dims=[3])
     ]
 
     preds = []
@@ -107,7 +105,7 @@ def predict_with_tta(image, model):
 
 
 # -----------------------------
-# Prediction Function
+# Prediction
 # -----------------------------
 def predict_skin(file):
     try:
@@ -115,54 +113,37 @@ def predict_skin(file):
         pil_image = Image.open(file.file).convert("RGB")
         image_np = np.array(pil_image)
 
-        # -------- FILTERING PIPELINE --------
+        # -------- FILTERING --------
 
-        # 1. Blur check
+        # Blur handling (no rejection)
         if is_blurry(image_np):
-            return {
-                "disease": "Skin Disease",
-                "prediction": "Invalid Image",
-                "confidence": 0,
-                "message": "Image is too blurry. Please upload a clearer image."
-            }
+            image_np = enhance_contrast(image_np)
 
-        # 2. Enhance contrast
+        # Enhance + denoise
         image_np = enhance_contrast(image_np)
-
-        # 3. Denoise
         image_np = denoise(image_np)
 
-        # 4. Resize with padding
+        # Resize safely
         image_np = resize_with_padding(image_np, 224)
 
-        # Convert back to PIL
+        # Convert to PIL
         image = Image.fromarray(image_np)
 
-        # Apply transform
+        # Transform
         image = transform(image).unsqueeze(0)
 
-        # -------- MODEL PREDICTION --------
+        # -------- PREDICTION --------
         probs = predict_with_tta(image, model)
 
         confidence, idx = torch.max(probs, dim=1)
         confidence = confidence.item()
         idx = idx.item()
 
-        # -------- CONFIDENCE FILTER --------
-        if confidence < CONFIDENCE_THRESHOLD or (
-            confidence < 0.75 and SKIN_CLASSES[idx] == "Unknown_Normal"
-        ):
-            return {
-                "disease": "Skin Disease",
-                "prediction": "Uncertain",
-                "confidence": round(confidence, 4),
-                "message": "Low confidence. Please upload a clearer image or consult a dermatologist."
-            }
-
         return {
             "disease": "Skin Disease",
             "prediction": SKIN_CLASSES[idx],
-            "confidence": round(confidence, 4)
+            "confidence": round(confidence, 4),
+            "warning": "Low confidence prediction" if confidence < 0.6 else ""
         }
 
     except Exception as e:
