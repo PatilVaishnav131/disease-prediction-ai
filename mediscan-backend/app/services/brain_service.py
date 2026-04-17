@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 from PIL import Image
 import cv2
+from io import BytesIO          # ← added
 
 MODEL_PATH = "app/models/brain_tumor_fixed.keras"
 IMG_SIZE = 299
@@ -15,7 +16,7 @@ CLASS_LABELS = ['glioma', 'meningioma', 'notumor', 'pituitary']
 
 
 # -----------------------------
-# Filtering Functions
+# Filtering Functions (unchanged)
 # -----------------------------
 def is_blurry(image_np, threshold=100):
     gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
@@ -55,26 +56,19 @@ def resize_with_padding(image_np, size=299):
 
 
 # -----------------------------
-# Preprocessing
+# Preprocessing (updated)
 # -----------------------------
-def preprocess_image(file):
-    # Load image
-    pil_image = Image.open(file.file).convert("RGB")
+def preprocess_image(image_bytes):                    # ← changed parameter
+    # Load image from bytes instead of UploadFile
+    pil_image = Image.open(BytesIO(image_bytes)).convert("RGB")   # ← changed
     image_np = np.array(pil_image)
 
     # -------- FILTERING --------
-
-    # Blur handling (do not reject)
     if is_blurry(image_np):
         image_np = enhance_contrast(image_np)
 
-    # Contrast enhancement
     image_np = enhance_contrast(image_np)
-
-    # Denoising
     image_np = denoise(image_np)
-
-    # Resize safely
     image_np = resize_with_padding(image_np, IMG_SIZE)
 
     # Normalize
@@ -85,12 +79,11 @@ def preprocess_image(file):
 
 
 # -----------------------------
-# Prediction
+# Prediction (updated)
 # -----------------------------
-def predict_brain_tumor(file):
+def predict_brain_tumor(image_bytes):                 # ← changed parameter
     try:
-        image = preprocess_image(file)
-
+        image = preprocess_image(image_bytes)         # ← pass bytes
         preds = model.predict(image)
         confidence = float(np.max(preds))
         idx = int(np.argmax(preds))
